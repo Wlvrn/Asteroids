@@ -1,7 +1,7 @@
 # this allows us to use code from
 # the open-source pygame library
 # throughout this file
-import pygame
+import pygame # type: ignore
 from constants import *
 from player import Player
 
@@ -17,8 +17,14 @@ def main():
     clock = pygame.time.Clock()
     dt = 0
 
+    updatable = []
+    drawable = []
+
     # Create player in the middle of the screen
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+
+    updatable.append(player)
+    drawable.append(player)
 
     # Game loop
     while True:
@@ -27,17 +33,22 @@ def main():
             if event.type == pygame.QUIT: # Allow user to close the window
                 return
             
-        # Fill the screen with black
-        screen.fill((0, 0, 0))
+        dt = clock.tick(60) / 1000 # Maintain 60 FPS
 
-        # Draw player
-        player.draw(screen)
+        # Update all updatable objects
+        for obj in updatable:
+            obj.update(dt)            
+        
+        screen.fill("black") # Clear screen
 
-        # Update the display
-        pygame.display.flip()
+        # Draw all drawable objects
+        for obj in drawable:
+            obj.draw(screen)
 
-        # Cap the frame rate to 60 FPS and calculate delta time
-        dt = clock.tick(60) / 1000 # Convert ms to seconds
+        # player.update(dt) # Update player rotation
+        # player.draw(screen) # Draw player
+
+        pygame.display.flip() # Refresh the display
 
 if __name__ == "__main__":
     main()
